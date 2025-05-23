@@ -15,7 +15,7 @@ A lightweight, extensible Go module that wraps the OpenVPN CLI — designed for 
 
 ## 📦 Installation
 ```bash
-go  get  github.com/smantel-ch/openvpn-go
+go get github.com/smantel-ch/openvpn-go
 ```
 
 
@@ -35,10 +35,13 @@ import (
 func main() {
 	config := []byte("...your .ovpn content...")
 
-	client, err := openvpn.NewVPNClient(config, "myuser", "mypass")
+	client, err := openvpn.NewVPNClient()
 	if err != nil {
 		log.Fatal("init error:", err)
 	}
+
+    client.SetConfig(config)
+    client.SetCredentials("myuser", "mypass")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
@@ -51,7 +54,18 @@ func main() {
 	client.Disconnect()
 }
 ```
+> ⚠️ **Note**: `SetConfig()` expects the full `.ovpn` config file as **bytes** (not a path). <br />Use `os.ReadFile("my.ovpn")` to load it.
 
+
+## 🐛 Debug Logging
+To view debug output from the OpenVPN client, you must provide a logger that implements the following interface:
+
+```go
+type Logger interface {
+    Debugf(format string, args ...any)
+}
+```
+> ℹ️ **Info**: Only `Debugf()` logs are emitted by this package. <br />All functional errors and connection statuses are returned via Go errors and status channels.
 
 ## 🧪 Testing
 Run the test suite:
