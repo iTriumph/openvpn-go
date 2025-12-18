@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func main() {
+func _main() {
 	username := flag.String("user", "", "VPN username")
 	password := flag.String("pass", "", "VPN password")
 	configPath := flag.String("config", "", "Path to .ovpn config file")

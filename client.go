@@ -27,6 +27,7 @@ type VPNClient struct {
 	logsBuffer    []string
 	closed        bool
 	lastErrorLine string
+	ip            string
 }
 
 func NewVPNClient() (*VPNClient, error) {
@@ -112,9 +113,11 @@ func (vc *VPNClient) Disconnect() error {
 }
 
 func (vc *VPNClient) DisconnectAndWait(ctx context.Context) error {
+
 	if err := vc.Disconnect(); err != nil {
 		return err
 	}
+
 	for {
 		select {
 		case s, ok := <-vc.StatusChan():
@@ -127,8 +130,10 @@ func (vc *VPNClient) DisconnectAndWait(ctx context.Context) error {
 			if s == StatusDisconnected || s == StatusError {
 				return nil
 			}
+
 		case err := <-vc.ErrorsChan():
 			return err
+
 		case <-ctx.Done():
 			return ctx.Err()
 		}

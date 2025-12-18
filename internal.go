@@ -13,6 +13,7 @@ import (
 func (vc *VPNClient) waitForConnection(ctx context.Context, result chan error) {
 	for {
 		select {
+
 		case s := <-vc.status:
 			if s == StatusConnected {
 				result <- nil
@@ -21,11 +22,12 @@ func (vc *VPNClient) waitForConnection(ctx context.Context, result chan error) {
 				result <- ErrConnectionFailed
 				return
 			}
+
 		case err := <-vc.errors:
 			result <- err
 			return
+
 		case <-ctx.Done():
-			_ = vc.Disconnect()
 			_ = vc.forceKillIfStillRunning()
 			result <- ErrTimeout
 			return
