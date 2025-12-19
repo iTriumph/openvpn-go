@@ -86,8 +86,8 @@ func (vc *VPNClient) pipeOutput(r io.ReadCloser) {
 		re := regexp.MustCompile(`ifconfig (10.+?) 255`)
 		match := re.FindStringSubmatch(line)
 		if len(match) > 0 {
-			vc.ip = match[1]
-			logger.Debugf("获取到ip地址: %s", vc.ip)
+			vc.Ip = match[1]
+			logger.Debugf("获取到ip地址: %s", vc.Ip)
 		}
 	}
 }

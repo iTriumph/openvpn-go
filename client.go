@@ -27,7 +27,7 @@ type VPNClient struct {
 	logsBuffer    []string
 	closed        bool
 	lastErrorLine string
-	ip            string
+	Ip            string
 }
 
 func NewVPNClient() (*VPNClient, error) {
