@@ -50,7 +50,7 @@ func (vc *VPNClient) SetConfig(config []byte) {
 	vc.config = config
 }
 
-func (vc *VPNClient) Connect(ctx context.Context) error {
+func (vc *VPNClient) Connect(connectCtx context.Context) error {
 
 	if pids, err := killLingeringOpenVPN(); err != nil {
 		return fmt.Errorf("%w: could not terminate OpenVPN process(es): %v — %v", ErrZombieProcess, pids, err)
@@ -67,7 +67,7 @@ func (vc *VPNClient) Connect(ctx context.Context) error {
 		return err
 	}
 
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(context.Background())
 	vc.cancel = cancel
 
 	cmd := exec.CommandContext(ctx, "openvpn", "--config", vc.configPath, "--auth-user-pass", vc.authPath, "--auth-nocache")
@@ -92,7 +92,7 @@ func (vc *VPNClient) Connect(ctx context.Context) error {
 	go vc.monitor()
 
 	result := make(chan error, 1)
-	go vc.waitForConnection(ctx, result)
+	go vc.waitForConnection(connectCtx, result)
 
 	return <-result
 }
